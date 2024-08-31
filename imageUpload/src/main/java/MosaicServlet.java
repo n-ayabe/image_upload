@@ -24,7 +24,7 @@ import javax.servlet.http.Part;
 @WebServlet("/MosaicServlet")
 @MultipartConfig
 public class MosaicServlet extends HttpServlet {
-    private static final String DB_URL = "jdbc:postgresql://localhost:5432/jdbc";
+    private static final String DB_URL = "jdbc:postgresql://localhost:5432/mydatabase"; // 正しいデータベース名に修正
     private static final String DB_USER = "postgres";
     private static final String DB_PASSWORD = "password";
     private static final String UPLOAD_DIR = "img/image_origin"; // Original image directory
@@ -33,6 +33,13 @@ public class MosaicServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // JDBCドライバーの明示的なロード（JDBC 4.0以降は通常不要）
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new ServletException("JDBC Driver not found.", e);
+        }
+
         Part filePart = request.getPart("image"); // Retrieves <input type="file" name="image">
         String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // Get the original file name
 
@@ -43,35 +50,16 @@ public class MosaicServlet extends HttpServlet {
         String uploadPath = getServletContext().getRealPath("/") + File.separator + UPLOAD_DIR;
         String mosaicPath = getServletContext().getRealPath("/") + File.separator + MOSAIC_DIR;
 
-        System.out.println("Upload path: " + uploadPath); // Debugging line to check path
-        System.out.println("Mosaic path: " + mosaicPath); // Debugging line to check path
-
-        File uploadDir = new File(uploadPath);
-        if (!uploadDir.exists()) {
-            boolean dirCreated = uploadDir.mkdirs(); // Create the directory if it does not exist
-            System.out.println("Directory created: " + dirCreated); // Debugging line to check directory creation
-        } else {
-            System.out.println("Directory already exists."); // Debugging line to confirm directory exists
-        }
-
-        File mosaicDir = new File(mosaicPath);
-        if (!mosaicDir.exists()) {
-            boolean dirCreated = mosaicDir.mkdirs(); // Create the directory if it does not exist
-            System.out.println("Directory created: " + dirCreated); // Debugging line to check directory creation
-        } else {
-            System.out.println("Directory already exists."); // Debugging line to confirm directory exists
-        }
+        // Create directories if they do not exist
+        createDirectoryIfNotExists(uploadPath);
+        createDirectoryIfNotExists(mosaicPath);
 
         File originalFile = new File(uploadPath + File.separator + uniqueFileName);
         File mosaicFile = new File(mosaicPath + File.separator + uniqueFileName);
 
-        System.out.println("Original file to save: " + originalFile.getAbsolutePath()); // Debugging line to check file path
-        System.out.println("Mosaic file to save: " + mosaicFile.getAbsolutePath()); // Debugging line to check file path
-
         // Save the original file on the server
         try (InputStream inputStream = filePart.getInputStream()) {
             Files.copy(inputStream, originalFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("Original file saved at: " + originalFile.getAbsolutePath()); // Debugging line to confirm file save
         }
 
         // Apply mosaic processing to the image
@@ -86,13 +74,20 @@ public class MosaicServlet extends HttpServlet {
             }
             response.sendRedirect("display.jsp");
         } catch (SQLException e) {
-            throw new ServletException("Database error", e);
+            throw new ServletException("Database error: " + e.getMessage(), e);
         }
     }
 
     private String generateUniqueFileName(String originalFileName) {
         String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         return timeStamp + "_" + originalFileName;
+    }
+
+    private void createDirectoryIfNotExists(String path) {
+        File dir = new File(path);
+        if (!dir.exists()) {
+            dir.mkdirs(); // Create directories if they do not exist
+        }
     }
 
     private void applyMosaic(File inputFile, File outputFile) throws IOException {
