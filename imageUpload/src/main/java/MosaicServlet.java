@@ -24,7 +24,7 @@ import javax.servlet.http.Part;
 @WebServlet("/MosaicServlet")
 @MultipartConfig
 public class MosaicServlet extends HttpServlet {
-    private static final String DB_URL = "jdbc:postgresql://localhost:5432/mydatabase"; // 正しいデータベース名に修正
+    private static final String DB_URL = "jdbc:postgresql://localhost:5432/jdbc"; // 正しいデータベース名に修正
     private static final String DB_USER = "postgres";
     private static final String DB_PASSWORD = "password";
     private static final String UPLOAD_DIR = "img/image_origin"; // Original image directory
