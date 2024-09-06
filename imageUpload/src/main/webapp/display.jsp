@@ -3,7 +3,37 @@
 <html>
 <head>
     <title>Display Images</title>
+<style>
+/* image_container のスタイル */
+.image_container {
+    display: flex; /* Flexboxを使用 */
+    justify-content: space-between; /* 画像の間にスペースを均等に配置 */
+    align-items: flex-start; /* 画像の上端を揃える */
+}
+
+/* origin_image のスタイル */
+.origin_image {
+    flex: 1; /* 横幅を均等に設定 */
+    margin-right: 10px; /* origin_image と mosaic_image の間にマージンを設定 */
+}
+
+/* mosaic_image のスタイル */
+.mosaic_image {
+    flex: 1; /* 横幅を均等に設定 */
+    margin-left: 10px; /* mosaic_image と origin_image の間にマージンを設定 */
+}
+
+/* h2 と p のスタイル (必要に応じて) */
+.origin_image h2, .mosaic_image h2 {
+    margin: 0;
+}
+
+.origin_image p, .mosaic_image p {
+    margin: 0;
+}
+</style>
 </head>
+
 <body>
     <h1>Display Images</h1>
     <%
@@ -25,10 +55,16 @@
                     String fullImagePath = request.getContextPath() + "/" + uploadDir + "/" + imageName;
                     String fullMosaicPath = request.getContextPath() + "/" + mosaicDir + "/" + imageName;
     %>
-                    <h2>Original Image</h2>
-                    <img src="<%= fullImagePath %>" alt="Original Image" style="max-width: 300px; max-height: 300px;" />
-                    <h2>Mosaic Image</h2>
-                    <img src="<%= fullMosaicPath %>" alt="Mosaic Image" style="max-width: 300px; max-height: 300px;" />
+					<div class="image_container">
+						<div class="origin_image">
+    	                	<h2>Original Image</h2>
+        	        	    <img src="<%= fullImagePath %>" alt="Original Image" style="max-width: 300px; max-height: 300px;" />
+            	        </div>
+						<div class="mosaic_image">
+        	    	        <h2>Mosaic Image</h2>
+    	            	    <img src="<%= fullMosaicPath %>" alt="Mosaic Image" style="max-width: 300px; max-height: 300px;" />
+	                    </div>
+                    </div>
     <%
                 }
             }
