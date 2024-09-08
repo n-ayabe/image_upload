@@ -15,7 +15,6 @@
 <style>
 
 .container{
-	background-color: gray;
 }
 
 /* Googleフォントを適用 */
@@ -31,6 +30,32 @@
     border-radius: 50%; /* 円形にする */
     border: none; /* ボタンのボーダーを削除 */
     cursor: pointer; /* ポインタがボタンであることを示すカーソル */
+	transform: scale(1.2); /* 画像を拡大 */
+	object-fit: cover; /* 画像を拡大して親要素に合わせる */
+}
+
+.button_area{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100px;
+    border-radius: 50%; /* 円形にする */
+	background-color: #000;
+	overflow: hidden;
+	position: relative; /* 縁取りを正確に位置付けるために必要 */	
+		box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 1);
+	
+	}
+	
+	/* 画像の表示スタイル */
+.display-image {
+    position: fixed; /* 画面上の固定位置 */
+    top: 50%; /* 画面の中央に設定 */
+    left: 50%; /* 画面の中央に設定 */
+    transform: translate(-50%, -50%); /* 中央に配置するためにシフト */
+    max-width: 80vw; /* 画面幅の80%を最大幅として設定 */
+    max-height: 80vh; /* 画面高さの80%を最大高さとして設定 */
+    border: 5px solid #28a745; /* 緑色のボーダーを追加（オプション） */
 }
 
 </style>
@@ -39,10 +64,13 @@
 
 <body>
 <div class="container">
+<div class="button_area">
   <button id="button01" class="image-button">
-    <img src="/imageUpload/img/favi/BOOK.jpg" alt="Genau Button" style="width: 100%; height: 100%; border-radius: 50%;">
+    <img src="/imageUpload/img/favi/hari.jpg" alt="Genau Button" style="width: 100%; height: 100%; border-radius: 50%;">
   </button>
 </div>
+</div>
+
 <script>
 const button01 = document.getElementById("button01");
 button01.addEventListener("click", function(){createText()}, false);
@@ -69,10 +97,11 @@ async function createText() {
 
    // ライブラリを用いたテキスト移動のアニメーション： durationはアニメーションの時間、
    // 横方向の移動距離は「画面の横幅＋画面を流れるテキストの要素の横幅」、移動中に次の削除処理がされないようawait
-  await gsap.to("#" + div_text.id, {duration: 5, x: -1 * (document.documentElement.clientWidth + div_text.clientWidth)});
+  await gsap.to("#" + div_text.id, {duration: 4, x: -2 * (document.documentElement.clientWidth + div_text.clientWidth)});
 
   div_text.parentNode.removeChild(div_text); // 画面上の移動終了後に削除
 }
+
 </script>
 </body>
 </html>
